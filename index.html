@@ -306,6 +306,11 @@ const 담당자 = "익산맑은샘유치원 신종용 (☎ 063-858-6637)";
     });
   }
 
+  /* 진짜 웹주소인지 확인한다. 빈 칸이나 '여기에주소' 같은 예시 글자는 걸러낸다. */
+  function validUrl(u) {
+    return /^https?:\/\//i.test(String(u || "").trim());
+  }
+
   /* ── CSV 해석 (따옴표 안의 쉼표·줄바꿈까지 처리) ── */
   function parseCSV(text) {
     var rows = [], row = [], cur = "", inQuote = false;
@@ -360,7 +365,7 @@ const 담당자 = "익산맑은샘유치원 신종용 (☎ 063-858-6637)";
 
     var url = 시트주소 + (시트주소.indexOf("?") > -1 ? "&" : "?") + "_=" + Date.now();
 
-    fetch(url)
+    fetch(url, { cache: "no-store" })
       .then(function (r) {
         if (!r.ok) { throw new Error("HTTP " + r.status); }
         return r.text();
@@ -470,12 +475,12 @@ const 담당자 = "익산맑은샘유치원 신종용 (☎ 063-858-6637)";
       if (n.updated) { meta.push("갱신 " + esc(n.updated)); }
       if (n.size)    { meta.push(esc(n.size)); }
 
-      var openBtn = n.notebook
+      var openBtn = validUrl(n.notebook)
         ? '<a class="btn btn-open" href="' + esc(n.notebook) +
           '" target="_blank" rel="noopener">노트북 열기</a>'
         : '<span class="btn btn-off">준비 중</span>';
 
-      var zipBtn = n.zip
+      var zipBtn = validUrl(n.zip)
         ? '<a class="btn btn-zip" href="' + esc(n.zip) +
           '" target="_blank" rel="noopener">자료 받기</a>'
         : '<span class="btn btn-off">준비 중</span>';
